@@ -1,0 +1,178 @@
+*universal_runner.nvim.txt*     Run or Debug the current file using customizable runners
+                                  Author:  Monster0506 <tjraklovits@gmail.com>
+
+License: MIT
+URL:     https://github.com/monster0506/universal_runner.nvim
+
+==============================================================================
+INTRODUCTION                                                    *universal_runner*
+
+Universal Runner is a lightweight Neovim plugin that provides a simple,
+extensible way to **run or debug the current buffer** using custom commands.
+Each filetype can define its own "runner" (for example: Python, Go, Rust, etc.)
+with `run` and/or `debug` templates.
+
+The plugin automatically sets up buffer-local keymaps and / or commands for
+running and debugging files.
+
+==============================================================================
+CONTENTS                                                        *universal_runner-contents*
+
+    1. Setup ........................................ |universal_runner-setup|
+    2. Configuration ................................ |universal_runner-config|
+    3. Keybindings .................................. |universal_runner-keymaps|
+    4. Custom runners ............................... |universal_runner-runners|
+    5. Commands and behavior ........................ |universal_runner-usage|
+    6. Default options .............................. |universal_runner-defaults|
+
+==============================================================================
+1. SETUP                                                        *universal_runner-setup*
+
+Load the plugin in your Neovim config and call the setup function:
+
+>lua
+    require("universal_runner").setup()
+<
+
+You can pass an options table to customize behavior:
+
+>lua
+    require("universal_runner").setup({
+        split_cmd = "split",
+        use_quickfix = false,
+        enable_makeprg = true,
+        keymaps = {
+            run = "<leader>x",
+            debug = "<leader>d",
+        },
+        runners = {
+            python = {
+            filetypes = { "python" },
+            run = "python3 %file%",
+            debug = "python3 -m pdb %file%",
+            },
+        },
+    })
+<
+
+==============================================================================
+2. CONFIGURATION                                                *universal_runner-config*
+
+Options passed to `setup()` override the plugin’s defaults.  
+Default values are listed in |universal_runner-defaults|.
+
+• *split_cmd*  
+  Command used to open a terminal split.  
+  Example: `"vsplit"`, `"split"`, or `"tabnew"`.
+
+• *use_quickfix*  
+  (Currently reserved for future functionality.)
+
+• *enable_makeprg*  
+  When true, automatically sets `makeprg` to the runner’s run command
+  per buffer.
+
+• *runners*  
+  A table that defines custom runners keyed by runner name.  
+  See |universal_runner-runners| for details.
+
+==============================================================================
+3. KEYBINDINGS                                                  *universal_runner-keymaps*
+
+Default key mappings (per buffer):
+
+    <leader>rr    Run current file using the associated runner
+    <leader>rd    Debug current file using the associated runner
+
+You can override these defaults using:
+
+>lua
+    keymaps = {
+        run = "<leader>x",
+        debug = "<leader>d",
+    }
+<
+
+==============================================================================
+4. CUSTOM RUNNERS                                               *universal_runner-runners*
+
+Each runner defines how to execute or debug files for specific filetypes.
+
+Example runner definition:
+
+>lua
+    runners = {
+        go = {
+            filetypes = { "go" },
+            run = "go run %file%",
+            debug = "dlv exec %file%",
+            keymaps = {
+            run = "<leader>gr",
+            },
+            run_command = "GoRun", -- :GoRun command
+        },
+    }
+<
+
+**Runner fields:**
+
+• *filetypes* — List of filetypes that trigger this runner.
+
+• *run* — Command template for running the current file.
+  `%file%` is replaced with the full file path.
+
+• *debug* — Command template for debugging the current file.
+
+• *keymaps* — (Optional) Override the plugin’s global keymaps for this runner.
+
+• *run_command* — (Optional) Creates a user command `:GoRun` (or whatever name
+  you specify) for manual invocation.
+
+==============================================================================
+5. COMMANDS AND BEHAVIOR                                        *universal_runner-usage*
+
+When a runner is matched to the current buffer’s filetype:
+
+- Keymaps are created for *run* and *debug* actions.
+- Optional user command (`run_command`) is created.
+- If enabled, the buffer’s |makeprg| is updated.
+
+Running commands opens a terminal split (`vsplit` by default) where the command
+executes asynchronously. When the process ends, the terminal waits for you to
+press `<Enter>` before closing automatically.
+
+==============================================================================
+6. DEFAULT OPTIONS                                              *universal_runner-defaults*
+
+Below are the plugin defaults:
+
+>lua
+    {
+    keymaps = {
+        run = "<leader>rr",
+        debug = "<leader>rd",
+    },
+    split_cmd = "vsplit",
+    use_quickfix = false,
+    enable_makeprg = true,
+    runners = {},
+    }
+<
+
+==============================================================================
+NOTES
+
+- `%file%` expands to the full path of the current buffer.
+- Works across shells: automatically detects PowerShell (Windows) or Bash
+  (Unix-like systems).
+- Designed to be minimal yet extensible.
+
+==============================================================================
+AUTHOR AND LICENSE
+
+Written by Monster0506 <tjraklovits@gmail.com>  
+Licensed under the MIT license.
+
+==============================================================================
+vim:tw=78:ts=8:sw=4:ft=help:norl:
+
