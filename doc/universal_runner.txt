@@ -61,18 +61,18 @@ You can pass an options table to customize behavior:
 Options passed to `setup()` override the plugin’s defaults.  
 Default values are listed in |universal_runner-defaults|.
 
-• *split_cmd*  
+• split_cmd  
   Command used to open a terminal split.  
   Example: `"vsplit"`, `"split"`, or `"tabnew"`.
 
-• *use_quickfix*  
+• use_quickfix  
   (Currently reserved for future functionality.)
 
-• *enable_makeprg*  
+• enable_makeprg  
   When true, automatically sets `makeprg` to the runner’s run command
   per buffer.
 
-• *runners*  
+• runners  
   A table that defines custom runners keyed by runner name.  
   See |universal_runner-runners| for details.
 
@@ -116,16 +116,16 @@ Example runner definition:
 
 **Runner fields:**
 
-• *filetypes* — List of filetypes that trigger this runner.
+• filetypes — List of filetypes that trigger this runner.
 
-• *run* — Command template for running the current file.
+• run — Command template for running the current file.
   `%file%` is replaced with the full file path.
 
-• *debug* — Command template for debugging the current file.
+• debug — Command template for debugging the current file.
 
-• *keymaps* — (Optional) Override the plugin’s global keymaps for this runner.
+• keymaps — (Optional) Override the plugin’s global keymaps for this runner.
 
-• *run_command* — (Optional) Creates a user command `:GoRun` (or whatever name
+• run_command — (Optional) Creates a user command `:GoRun` (or whatever name
   you specify) for manual invocation.
 
 ==============================================================================
@@ -133,7 +133,7 @@ Example runner definition:
 
 When a runner is matched to the current buffer’s filetype:
 
-- Keymaps are created for *run* and *debug* actions.
+- Keymaps are created for run and debug actions.
 - Optional user command (`run_command`) is created.
 - If enabled, the buffer’s |makeprg| is updated.
 
